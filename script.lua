@@ -187,7 +187,7 @@ end)
 local resourceBoxes = {}
 local inputYOffset, boxX = 230, 20
 
-for name, goal in pairs(targetResources) do
+for name, _ in pairs(targetResources) do
     local icon = name == "Bacon" and "🥓" or name == "Meat" and "🍖" or name == "Ashes" and "🧱" or name == "Fossil" and "🦴" or "📦"
     local box = createBox(name, icon, UDim2.new(0, boxX, 0, 100))
     resourceBoxes[name] = box
@@ -195,10 +195,17 @@ for name, goal in pairs(targetResources) do
     local input = Instance.new("TextBox", gui)
     input.Size = UDim2.new(0, 100, 0, 30)
     input.Position = UDim2.new(0, boxX, 0, inputYOffset)
-    input.Text = tostring(goal)
+    input.Text = tostring(targetResources[name])
     input.PlaceholderText = name .. " Goal"
     input.BackgroundColor3 = Color3.fromRGB(90, 90, 130)
     input.TextColor3 = Color3.new(1,1,1)
+
+    -- ✅ ถ้า config มี ก็เอาค่านั้นมาใช้
+    if getgenv().AutoFarmConfig and getgenv().AutoFarmConfig[name] then
+        input.Text = tostring(getgenv().AutoFarmConfig[name])
+        targetResources[name] = getgenv().AutoFarmConfig[name]
+    end
+
     input.FocusLost:Connect(function()
         local v = tonumber(input.Text)
         if v then targetResources[name] = v end
